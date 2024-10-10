@@ -8,12 +8,14 @@ PROPID_HEIGHT = 4
 
 red_circle = cv2.imread(IMAGE_PATH)
 
-x, y, w, h = 720, 100, 200, 200 #720 is height
+x, y, w, h = 720, 100, 200, 200  # 720 is height
 red_circle = cv2.resize(red_circle, (w, h))
 
+
 def draw_circle(frame, x, y):
-    frame[y : y+h, x : x+w] = red_circle
+    frame[y : y + h, x : x + w] = red_circle
     return frame
+
 
 stream = cv2.VideoCapture(WEB_CAM_NUM)
 if not stream.isOpened():
@@ -31,11 +33,11 @@ while True:
         print("No more stream")
         break
 
-    if y+h == height:
+    if y + h == height:
         y = 0
     else:
         y += 5
-    
+
     frame = draw_circle(frame, x, y)
 
     cv2.imshow("Webcam", frame)
