@@ -37,8 +37,9 @@ class Manager:
             frame = cv2.resize(frame, (width, height))
 
             frame = self.handDetector.findHands(frame)
-            frame = self.movingObjects.handle_object(frame)
             hand_pos = self.handDetector.findPosition(frame)
+            frame = self.movingObjects.handle_object(frame, hand_pos)
+            
 
             cv2.imshow("Webcam", frame)
             if cv2.waitKey(1) == ord("q"):

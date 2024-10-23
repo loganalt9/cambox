@@ -19,21 +19,26 @@ class MovingObjects:
         self.stream_width = width
         self.stream_height = height
 
-    def handle_object(self, frame: Frame) -> Frame:
+    def handle_object(self, frame: Frame, hand_pos: list) -> Frame:
         if not self.on_screen:
             frame = self.place_object(frame)
             self.on_screen = True
             return frame
         
+        if hand_pos is not None and self.detect_collision(hand_pos):
+            self.place_object(frame)
+            return frame
+        
         if self.picture.get_y() + self.speed <= self.stream_height:
             frame = self.move_object(frame)
         else:
-            self.reached_bottom()
+            self.reached_bottom(hand_pos)
+
 
         return frame
 
     def place_object(self, frame: Frame) -> Frame:
-        start_x = np.random.randint(0, self.stream_width)
+        start_x = np.random.randint(0, self.stream_width - self.picture.width)
         start_y = 0
 
         self.picture.set_x(start_x)
@@ -56,6 +61,17 @@ class MovingObjects:
 
         return frame
 
-    def reached_bottom(self):
+    def reached_bottom(self) -> None:
         print("You lost, better luck next time.")
         sys.exit()
+
+    def detect_collision(self, hand_pos) -> bool:
+        picture_range_x = (self.picture.get_x(), self.picture.get_x()+self.picture.width)
+        picture_range_y = (self.picture.get_y(), self.picture.get_y()+self.picture.height)
+
+        for pos in hand_pos:
+            if ((picture_range_x[0] <= pos[1] and pos[1] <= picture_range_x[1]) 
+                and (picture_range_y[0] <= pos[2] and pos[2] <= picture_range_y[1])):
+                return True
+            
+        return False
